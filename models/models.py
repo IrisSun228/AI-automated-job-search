@@ -4,17 +4,16 @@ from pydantic import BaseModel
 
 
 class Job(BaseModel):
-    id: Optional[str] = None
-    location: Optional[str] = None
-    title: Optional[str] = None
-    company: Optional[str] = None
-    description: Optional[str] = None
-    jobProvider: Optional[str] = None
-    url: Optional[str] = None
-    rating: Optional[int] = None
-    rating_description: Optional[str] = None
-    # company_rating: Optional[int] 
-    # company_rating_description: Optional[str]  
+    id: Optional[str]
+    location: Optional[str]
+    title: Optional[str]
+    company: Optional[str]
+    description: Optional[str]
+    url: Optional[str]
+    job_rating: Optional[int]
+    job_rating_description: Optional[str]
+    company_rating: Optional[int]
+    company_rating_description: Optional[str]
 
     
 class JobResults(BaseModel): 

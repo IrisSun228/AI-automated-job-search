@@ -2,7 +2,8 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
-from crewai_tools import FileReadTool, SerperDevTool
+from crewai_tools import FileReadTool, SerperDevTool, ScrapeWebsiteTool
+
 from models.models import JobResults
 import json
 
@@ -15,8 +16,9 @@ load_dotenv()
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
 
 resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-jobs_file_read_tool = FileReadTool(file_path="data/sample_jobs.json")
+jobs_file_read_tool = FileReadTool(file_path="data\IndeedScraper_java_2025-05-09.json")
 search_tool = SerperDevTool(n_results=5)
+# scrape_tool = ScrapeWebsiteTool()
 
 @CrewBase
 class AutomatedJobSearch():
@@ -26,7 +28,9 @@ class AutomatedJobSearch():
     tasks_config = "config/tasks.yaml"
 
     def __init__(self, query: str):
+    # def __init__(self, query: str, clearance_filter: str = "1"):
         self.query = query
+        # self.clearance_filter = clearance_filter
         self.response_schema = json.dumps(JobResults.model_json_schema(), indent=2)
 
     # Learn more about YAML configuration files here:
@@ -39,33 +43,33 @@ class AutomatedJobSearch():
     def job_search_expert_agent(self) -> Agent:
         return Agent(
             config=self.agents_config['job_search_expert_agent'],
-            tools=[jobs_file_read_tool], 
+            tools=[jobs_file_read_tool],
             verbose=True
         )
 
-    @agent
-    def job_rating_expert_agent(self) -> Agent:
-        return Agent(
-            config=self.agents_config['job_rating_expert_agent'],
-            tools=[resume_file_read_tool],
-            verbose=True
-        )
+    # @agent
+    # def job_rating_expert_agent(self) -> Agent:
+    #     return Agent(
+    #         config=self.agents_config['job_rating_expert_agent'],
+    #         tools=[resume_file_read_tool],
+    #         verbose=True
+    #     )
 
-    @agent
-    def company_rating_expert_agent(self) -> Agent:
-        return Agent(
-            config=self.agents_config['company_rating_expert_agent'],
-            tools=[search_tool], 
-            verbose=True
-        )
+    # @agent
+    # def company_rating_expert_agent(self) -> Agent:
+    #     return Agent(
+    #         config=self.agents_config['company_rating_expert_agent'],
+    #         tools=[search_tool], 
+    #         verbose=True
+    #     )
 
-    @agent
-    def summarization_expert_agent(self) -> Agent:
-        return Agent(
-            config=self.agents_config['summarization_expert_agent'],
-            tools=None,
-            verbose=True
-        )
+    # @agent
+    # def summarization_expert_agent(self) -> Agent:
+    #     return Agent(
+    #         config=self.agents_config['summarization_expert_agent'],
+    #         tools=None,
+    #         verbose=True
+    #     )
 
     # To learn more about structured task outputs,
     # task dependencies, and task callbacks, check out the documentation:
@@ -75,27 +79,28 @@ class AutomatedJobSearch():
         return Task(
             config=self.tasks_config['job_search_task'], # type: ignore[index]
             input={"query": self.query}
+            # input={"query": self.query, "clearance_filter": self.clearance_filter}
         )
 
-    @task
-    def job_rating_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['job_rating_task'], # type: ignore[index]
-        )
+    # @task
+    # def job_rating_task(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['job_rating_task'], # type: ignore[index]
+    #     )
 
-    @task
-    def evaluate_company_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['evaluate_company_task'], # type: ignore[index]
-            output_schema=self.response_schema
-        )
+    # @task
+    # def evaluate_company_task(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['evaluate_company_task'], # type: ignore[index]
+    #         output_schema=self.response_schema
+    #     )
 
-    @task
-    def structure_results_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['structure_results_task'], # type: ignore[index]
-            output_schema=self.response_schema
-        )
+    # @task
+    # def structure_results_task(self) -> Task:
+    #     return Task(
+    #         config=self.tasks_config['structure_results_task'], # type: ignore[index]
+    #         output_schema=self.response_schema
+    #     )
 
     @crew
     def crew(self) -> Crew:

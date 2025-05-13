@@ -1,32 +1,56 @@
 job_search_task:
   description: |
-    find a list jobs that fulfill the following requirements: {query}
-  expected_output: A structured output as a valid json with the list of jobs found with all their information. Make sure that field names are kept the same.
+    Use your tools to search JSON file of job listings that match the following requirements: {query}.
+    Some job listings may include security clearance information under a field called "attribute".
+    The following terms indicate a job *requires* clearance: 
+      - "TS/SCI with Polygraph"
+      - "TS/SCI"
+      - "Top Secret Clearance"
+      - "Secret Clearance"
+      - "DoD 8570"
+    
+    Based on the user's clearance preference ("{clearance_filter}"):
+      - If it's "1", return all matching jobs regardless of clearance.
+      - If it's "2", return ONLY jobs with one of the above attributes.
+      - If it's "3", return ONLY jobs that do NOT mention those.
+
+    For each job, extract and return the following fields where available:
+      - id (generate a unique id if needed)
+      - title
+      - company
+      - location
+      - description
+      - url
+      - attribute (if available)
+
+    Return a list of job objects under the key "jobs".
+  expected_output: |
+    A structured JSON with top-level field "jobs", containing a list of job objects. Do not include markdown or backticks.
   agent: job_search_expert_agent
 
-job_rating_task:
-  description: |
-    Using your tools to find the resume file information.  
-    Provide an additional rating on the jobs you received in context according to the Resume information. 
-    The rating is between 1-10 where 10 is the best fit. Every job should have a rating. 
-    Additionally add a rating_description field that explains the reasoning behind the number of rating in 1 or 2 sentences.
-    Make sure that all information about the jobs is also maintained in the output.
-  expected_output:  A structured output as a valid json of the list of jobs found and their respective ratings. Make sure that field names are kept the same.
-  agent: job_rating_expert_agent
+# job_rating_task:
+#   description: |
+#     Using your tools to find the resume file information.  
+#     Provide an additional rating on the jobs you received in context according to the Resume information. 
+#     The rating is between 1-10 where 10 is the best fit. Every job should have a job_rating. 
+#     Additionally add a job_rating_description field that explains the reasoning behind the number of rating in 1 or 2 sentences.
+#     Make sure that all information about the jobs is also maintained in the output.
+#   expected_output:  A structured output as a valid json of the list of jobs found and their respective ratings. Make sure that field names are kept the same.
+#   agent: job_rating_expert_agent
 
-evaluate_company_task:
-  description: |
-    Using your tools find information about the company of jobs.
-    Information can include company culture reviews, company financial reports, and stock performance. 
-    provide an additional rating for the company in a field called company_rating.
-    The rating is between 1-10 where 10 is the best rating. Every job should have a rating.  
-    Additionally add a company_rating_description field that explains the reasoning behind the number of rating in 1 or 2 sentences.
-    Make sure that all information about the jobs is also maintained in the output.
-  expected_output:  A structured output as a valid json of the list of jobs found and their respective ratings, make sure to structure all information according this model {output_schema}
-  agent: company_rating_expert_agent
+# evaluate_company_task:
+#   description: |
+#     Using your tools find information about the company of jobs.
+#     Information can include company culture reviews, company financial reports, and stock performance. 
+#     provide an additional rating for the company in a field called company_rating.
+#     The rating is between 1-10 where 10 is the best rating. Every job should have a rating.  
+#     Additionally add a company_rating_description field that explains the reasoning behind the number of rating in 1 or 2 sentences.
+#     Make sure that all information about the jobs is also maintained in the output.
+#   expected_output:  A structured output as a valid json of the list of jobs found and their respective ratings, make sure to structure all information according this model {output_schema}
+#   agent: company_rating_expert_agent
 
-structure_results_task:
-  description: |
-    Use all the context to structure the output as needed for the final reporting.
-  expected_output: A structured output as a valid json of the list of jobs found and their respective ratings. Make sure that the final output you provide is a valid json with schema {output_schema}. Don't include ```.
-  agent: summarization_expert_agent
+# structure_results_task:
+#   description: |
+#     Use all the context to structure the output as needed for the final reporting.
+#   expected_output: A structured output as a valid json of the list of jobs found and their respective ratings. Make sure that the final output you provide is a valid json with schema {output_schema}. Don't include ```.
+#   agent: summarization_expert_agent

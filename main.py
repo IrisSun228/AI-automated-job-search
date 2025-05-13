@@ -29,7 +29,15 @@ def run():
         """)
     )
 
-    crew = AutomatedJobSearch(query)
+    # Prompt user for security clearance preference
+    print("Do you want to include jobs with:")
+    print("1. Security clearance")
+    print("2. Only security clearance")
+    print("3. No security clearance")
+    choice = input("Enter your choice (1, 2, or 3): ")
+
+    crew = AutomatedJobSearch(query)  # Pass the choice to AutomatedJobSearch
+    # crew = AutomatedJobSearch(query, clearance_filter=choice)  # Pass the choice to AutomatedJobSearch
 
     try:
         result = crew.crew().kickoff()
