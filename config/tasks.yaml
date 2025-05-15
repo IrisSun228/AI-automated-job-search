@@ -1,7 +1,7 @@
 job_search_task:
   description: |
     Use your tools to search JSON file of job listings that match the following requirements: {query}.
-    Some job listings may include security clearance information under a field called "attribute".
+    Some job listings may include security clearance information in their "description" field.
     The following terms indicate a job *requires* clearance: 
       - "TS/SCI with Polygraph"
       - "TS/SCI"
